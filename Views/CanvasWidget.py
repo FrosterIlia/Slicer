@@ -2,16 +2,9 @@ from PySide6 import QtWidgets, QtCore
 from PySide6.QtCore import Qt, Slot, QStandardPaths
 
 from PySide6.QtGui import (
-    QMouseEvent,
-    QPaintEvent,
-    QPen,
-    QAction,
     QPainter,
-    QColor,
     QPixmap,
     QImage,
-    QIcon,
-    QKeySequence
 )
 
 class CanvasWidget(QtWidgets.QWidget):
@@ -31,6 +24,8 @@ class CanvasWidget(QtWidgets.QWidget):
         # self.layout.addWidget(self.text)
         # self.layout.addWidget(self.button)
 
+    @Slot(str)
     def load_image(self, path):
         self.image.load(path)
+        print("Canvas", path)
 

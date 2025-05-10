@@ -1,15 +1,11 @@
 import sys
-import random
-from PySide6 import QtCore, QtWidgets, QtGui
-from PySide6.QtCore import Qt, Slot, QStandardPaths
+from PySide6 import QtWidgets
+from PySide6.QtCore import Slot, Signal
 
 from PySide6.QtWidgets import (
     QWidget,
     QMainWindow,
     QApplication,
-    QFileDialog,
-    QStyle,
-    QColorDialog,
 )
 
 from Views.CanvasWidget import CanvasWidget
@@ -33,8 +29,10 @@ class MainWindow(QMainWindow):
         self.layout.addWidget(self.ui)
         self.layout.addWidget(self.canvas_widget)
 
+        self.connect_signals()
 
-        
+    def connect_signals(self):
+        self.ui.load_file_signal.connect(self.canvas_widget.load_image)
 
 
 if __name__ == "__main__":

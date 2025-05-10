@@ -1,5 +1,5 @@
 from PySide6 import QtWidgets, QtCore
-from PySide6.QtCore import Qt, Slot, QStandardPaths
+from PySide6.QtCore import Qt, Slot, Signal
 
 from PySide6.QtGui import (
     QMouseEvent,
@@ -7,29 +7,31 @@ from PySide6.QtGui import (
     QPen,
     QAction,
     QPainter,
-    QColor,
+    QColor, 
     QPixmap,
     QIcon,
     QKeySequence,
 )
 
 class UserInterfaceWidget(QtWidgets.QWidget):
+    
+    load_file_signal = Signal(str)
+
     def __init__(self):
         super().__init__()
 
 
         self.layout = QtWidgets.QVBoxLayout(self)
-        self.loadButton = QtWidgets.QPushButton("Load")
+        self.load_button = QtWidgets.QPushButton("Load")
 
+        self.layout.addWidget(self.load_button)
 
-        self.layout.addWidget(self.loadButton)
-
-        self.loadButton.clicked.connect(self.loadFile)
+        self.load_button.clicked.connect(self.load_file)
 
     @Slot()
-    def loadFile(self, canvas):
+    def load_file(self):
         path = QtWidgets.QFileDialog.getOpenFileName()
 
-        canvas.load_image(path[0])
+        print(path[0])
 
-        print(path)
+        self.load_file_signal.emit(path[0])
