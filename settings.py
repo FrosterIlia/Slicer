@@ -3,3 +3,7 @@ CANVAS_HEIGHT = 400
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 840
+
+DEFAULT_MONO_THRESHOLD = 10
+
+DIRECTIONS = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]

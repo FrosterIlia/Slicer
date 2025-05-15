@@ -59,4 +59,11 @@ class ResultCanvasWidget(QtWidgets.QWidget):
 
         for x in range(image.width()):
             for y in range(image.height()):
-             
+                pixel = QColor(image.pixel(x, y)).red()
+                mono_image.setPixel(x, y, 0 if pixel < threshold else 1)
+        return mono_image
+    
+    def generate_path(self):
+        pass
+    
+    
