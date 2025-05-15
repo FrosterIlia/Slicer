@@ -1,6 +1,6 @@
 import sys
 from PySide6 import QtWidgets
-from PySide6.QtCore import Slot, Signal
+from settings import *
 
 from PySide6.QtWidgets import (
     QWidget,
@@ -8,7 +8,8 @@ from PySide6.QtWidgets import (
     QApplication,
 )
 
-from Views.CanvasWidget import CanvasWidget
+from Views.RawCanvasWidget import RawCanvasWidget
+from Views.ResultCanvasWidget import ResultCanvasWidget
 from Views.UserInterfaceWidget import UserInterfaceWidget
 
 
@@ -16,23 +17,27 @@ class MainWindow(QMainWindow):
 
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
+        
+        self.setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT)
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
         
-        # Create layout for the central widget
-        self.layout = QtWidgets.QHBoxLayout(central_widget)
+        # Create layout for the central widget¨
+        self.layout = QtWidgets.QGridLayout(central_widget)
 
-        self.canvas_widget = CanvasWidget()
+        self.raw_canvas_widget = RawCanvasWidget()
+        self.result_canvas_widget = ResultCanvasWidget()
         self.ui = UserInterfaceWidget()
 
-        self.layout.addWidget(self.ui)
-        self.layout.addWidget(self.canvas_widget)
+        self.layout.addWidget(self.ui, 0, 0, 2, 1)
+        self.layout.addWidget(self.raw_canvas_widget, 0, 1, 1, 1)
+        self.layout.addWidget(self.result_canvas_widget, 1, 1, 1, 1)
 
         self.connect_signals()
 
     def connect_signals(self):
-        self.ui.load_file_signal.connect(self.canvas_widget.load_image)
+        self.ui.load_file_signal.connect(self.raw_canvas_widget.load_image)
 
 
 if __name__ == "__main__":
