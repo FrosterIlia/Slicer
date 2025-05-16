@@ -1,4 +1,4 @@
-from PySide6 import QtWidgets
+from PySide6.QtWidgets import QWidget, QVBoxLayout
 from PySide6.QtCore import Qt, Slot
 
 from settings import *
@@ -12,11 +12,11 @@ from PySide6.QtGui import (
     
 )
 
-class ResultCanvasWidget(QtWidgets.QWidget):
+class ResultCanvasWidget(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.layout = QtWidgets.QVBoxLayout(self)
+        self.layout = QVBoxLayout(self)
         self.setFixedSize(CANVAS_WIDTH, CANVAS_HEIGHT)
 
         self.pixmap = QPixmap(self.size())

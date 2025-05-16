@@ -1,11 +1,11 @@
 import sys
-from PySide6 import QtWidgets
 from settings import *
 
 from PySide6.QtWidgets import (
     QWidget,
     QMainWindow,
     QApplication,
+    QGridLayout
 )
 
 from Views.RawCanvasWidget import RawCanvasWidget
@@ -24,7 +24,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central_widget)
         
         # Create layout for the central widget¨
-        self.layout = QtWidgets.QGridLayout(central_widget)
+        self.layout = QGridLayout(central_widget)
 
         self.raw_canvas_widget = RawCanvasWidget()
         self.result_canvas_widget = ResultCanvasWidget()
