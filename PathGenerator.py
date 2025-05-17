@@ -3,7 +3,7 @@ from PySide6.QtGui import (
     QColor
 )
 
-from .settings import *
+from settings import *
 
 class PathGenerator:
     def __init__(self):

@@ -27,3 +27,20 @@ def test_build_graph():
     assert sorted(result_graph) == sorted(expected_graph) # testing keys in any order
     assert [sorted(i) for i in result_graph.values()] == [sorted(i) for i in expected_graph.values()] # testing values in any order
     
+def test_build_path():
+    path_generator = PathGenerator()
+    
+    initial_graph = {
+        (0, 0) : [(1, 1)],
+        (2, 0) : [(1, 1)],
+        (1, 1) : [(0, 0), (2, 0), (0, 2), (1, 2)],
+        (0, 2) : [(1, 1), (1, 2)],
+        (1, 2) : [(0, 2), (1, 1)]
+    }
+    
+    expected_path = [(0, 0), (1, 1), (2, 0), (0, 2), (1, 2)]
+    
+    result_path = path_generator.build_path(initial_graph)
+    print(result_path)
+    
+    assert result_path == expected_path
