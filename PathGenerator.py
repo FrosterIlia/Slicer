@@ -84,4 +84,6 @@ class PathGenerator:
         
         return self.build_path(image_graph)
     
+    def simplify_path(self):
+        pass
     

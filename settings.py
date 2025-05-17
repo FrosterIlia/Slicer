@@ -7,3 +7,5 @@ WINDOW_HEIGHT = 840
 DEFAULT_MONO_THRESHOLD = 100
 
 DIRECTIONS = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
+
+ANIMATION_STEP = 3
