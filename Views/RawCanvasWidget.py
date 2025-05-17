@@ -1,5 +1,5 @@
 from PySide6 import QtWidgets
-from PySide6.QtCore import Qt, Slot
+from PySide6.QtCore import Qt, Slot, Signal
 
 from settings import *
 
@@ -8,10 +8,12 @@ from PySide6.QtGui import (
     QPixmap,
     QImage,
     QColor
-    
+
 )
 
 class RawCanvasWidget(QtWidgets.QWidget):
+    
+    image_changed_signal = Signal(QImage)
     def __init__(self):
         super().__init__()
 
@@ -23,7 +25,6 @@ class RawCanvasWidget(QtWidgets.QWidget):
         self.painter = QPainter()
 
         self.image = QImage()
-        self.load_image("iron_sword.jpg")
 
 
     @Slot(str)
@@ -34,6 +35,7 @@ class RawCanvasWidget(QtWidgets.QWidget):
                     self.size(), 
                     Qt.AspectRatioMode.KeepAspectRatio,
                 ))
+        self.image_changed_signal.emit(self.image)
         self.update()
 
     def paintEvent(self, event):

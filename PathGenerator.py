@@ -11,13 +11,7 @@ class PathGenerator:
     
     def add_image(self, image: QImage):
         self.image = self.convert_mono_threshold(image, DEFAULT_MONO_THRESHOLD)
-        binary_array = self.convert_to_binary_array(self.image)
         
-        test_graph = self.build_graph(self.image, binary_array)
-        
-        test_path = self.build_path(test_graph)
-        print(test_path) 
-         
         
     def convert_mono_threshold(self, image, threshold): # Convert colorful image into monochrome
         image = image.convertToFormat(QImage.Format.Format_Grayscale8)
@@ -43,10 +37,11 @@ class PathGenerator:
                 
     
     def build_graph(self, image : QImage, binary_array): # Convert monochrome image to a graph (black - nodes)
-        height, width = image.width(), image.height()
+        height, width = image.height(), image.width()
         graph = {} 
         
         directions = DIRECTIONS
+        
         
         for y in range(height):
             for x in range(width):
@@ -56,7 +51,7 @@ class PathGenerator:
                         graph[node] = []
                     for dx, dy in directions:
                         ny, nx = y + dy, x + dx
-                        if 0 <= ny < height and 0 <= nx < width:
+                        if 0 <= ny and ny < height and 0 <= nx and nx < width:
                             if binary_array[ny][nx] == 0:
                                 neighbor = (nx, ny)
                                 graph[node].append(neighbor)
@@ -82,3 +77,11 @@ class PathGenerator:
                         stack.append(neighbour)
         return path
                 
+    def generate_path(self):
+        binary_image = self.convert_to_binary_array(self.image)
+        
+        image_graph = self.build_graph(self.image, binary_image)
+        
+        return self.build_path(image_graph)
+    
+    

@@ -35,9 +35,12 @@ class MainWindow(QMainWindow):
         self.layout.addWidget(self.result_canvas_widget, 1, 1, 1, 1)
 
         self.connect_signals()
+        
+        self.raw_canvas_widget.load_image("heart.jpg")
 
     def connect_signals(self):
         self.ui.load_file_signal.connect(self.raw_canvas_widget.load_image)
+        self.raw_canvas_widget.image_changed_signal.connect(self.result_canvas_widget.image_changed)
 
 
 if __name__ == "__main__":

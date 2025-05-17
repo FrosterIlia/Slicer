@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout
-from PySide6.QtCore import Qt, Slot
+from PySide6.QtCore import Qt, Slot, QLine, QPoint
 
 from settings import *
 from PathGenerator import PathGenerator
@@ -8,11 +8,11 @@ from PySide6.QtGui import (
     QPainter,
     QPixmap,
     QImage,
-    QColor
     
 )
 
 class ResultCanvasWidget(QWidget):
+        
     def __init__(self):
         super().__init__()
 
@@ -24,11 +24,13 @@ class ResultCanvasWidget(QWidget):
         self.painter = QPainter()
 
         self.image = QImage()
-        self.load_image("iron_sword.jpg")
+        # self.load_image("iron_sword.jpg")
         
         self.path_generator = PathGenerator()
         
         self.path_generator.add_image(self.image)
+        
+        self.path = []
         
 
 
@@ -44,26 +46,19 @@ class ResultCanvasWidget(QWidget):
 
     def paintEvent(self, event):
         painter = QPainter(self)
-        self.pixmap = QPixmap.fromImage(self.image.scaled(
-                    self.size(), 
-                    Qt.AspectRatioMode.KeepAspectRatio,
-                ))
+        if (self.image != QImage()):
+            self.pixmap = QPixmap.fromImage(self.image.scaled(
+                        self.size(), 
+                        Qt.AspectRatioMode.KeepAspectRatio,
+                    ))
         self.update()
         painter.drawPixmap(0, 0, self.pixmap)
-
-    def convert_mono_threshold(self, image, threshold):
-        image = image.convertToFormat(QImage.Format.Format_Grayscale8)
+        if self.path != []:
+            painter.drawLines([QPoint(i[0], i[1]) for i in self.path])
+    
+    @Slot(QImage)
+    def image_changed(self, image: QImage):
+        self.path_generator.add_image(image)
+        print("IMage changed")
         
-        mono_image = QImage(self.image.size(), QImage.Format.Format_Mono)
-        mono_image.fill(0)
-
-        for x in range(image.width()):
-            for y in range(image.height()):
-                pixel = QColor(image.pixel(x, y)).red()
-                mono_image.setPixel(x, y, 0 if pixel < threshold else 1)
-        return mono_image
-    
-    def generate_path(self):
-        pass
-    
-    
+        self.path = self.path_generator.generate_path()
