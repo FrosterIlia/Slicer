@@ -3,6 +3,8 @@ from PySide6.QtGui import (
     QColor
 )
 
+import math
+
 from settings import *
 
 class PathGenerator:
@@ -76,14 +78,29 @@ class PathGenerator:
                     if neighbour not in visited:
                         stack.append(neighbour)
         return path
+    
+    def simplify_path(self, path):
+        simplified_path = [path[0]]
+        current_direction = self.get_direction(path[0], path[1])
+        for i in range(1, len(path) - 1):
+            if self.get_direction(path[i], path[i+1]) != current_direction:
+                current_direction = self.get_direction(path[i], path[i+1])
+                simplified_path.append(path[i])
+                
+        simplified_path.append(path[-1])
+        return simplified_path
+        
+        
+    def get_direction(self, point1, point2):
+        distance = math.sqrt((point2[0] - point1[0]) ** 2 + (point2[1] - point1[1]) ** 2)
+        return [(point2[0] - point1[0]) / distance, (point2[1] - point1[1]) / distance]
                 
     def generate_path(self):
         binary_image = self.convert_to_binary_array(self.image)
-        
         image_graph = self.build_graph(self.image, binary_image)
-        
-        return self.build_path(image_graph)
+        raw_path = self.build_path(image_graph)
+        simplified_path = self.simplify_path(raw_path)
     
-    def simplify_path(self):
-        pass
+        # return ra÷w_path
+        return simplified_path
     
