@@ -1,9 +1,18 @@
-from PySide6.QtWidgets import QVBoxLayout, QPushButton, QFileDialog, QWidget
-from PySide6.QtCore import Slot, Signal
+from PySide6.QtWidgets import (
+    QVBoxLayout,
+    QPushButton,
+    QFileDialog, 
+    QWidget,
+)
+from PySide6.QtCore import Slot, Signal, Qt
+from settings import *
+
+from .LabelledSlider import LabelledSlider
 
 class UserInterfaceWidget(QWidget):
     
     load_file_signal = Signal(str)
+    threshold_signal = Signal(int)
 
     def __init__(self):
         super().__init__()
@@ -11,15 +20,29 @@ class UserInterfaceWidget(QWidget):
 
         self.layout = QVBoxLayout(self)
         self.load_button = QPushButton("Load")
+        
+        self.threshold_slider = LabelledSlider(
+            orientation = Qt.Horizontal,
+            minimum = MINIMUM_THRESHOLD,
+            maximum = MAXIMUM_THRESHOLD,
+            label_text = f"Threshold: {DEFAULT_MONO_THRESHOLD}",
+            label_position = "top"
+        )
+        self.threshold_slider.container.setFixedSize(200, 80)
 
         self.layout.addWidget(self.load_button)
+        self.layout.addWidget(self.threshold_slider.widget())
 
         self.load_button.clicked.connect(self.load_file)
+        self.threshold_slider.sliderReleased.connect(self.threshold_changed)
 
     @Slot()
     def load_file(self):
         path = QFileDialog.getOpenFileName()
 
-        print(path[0])
-
         self.load_file_signal.emit(path[0])
+        
+    @Slot()
+    def threshold_changed(self):
+        self.threshold_signal.emit(self.threshold_slider.value())
+        self.threshold_slider.label.setText(f"Threshold: {self.threshold_slider.value()}")

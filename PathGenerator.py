@@ -2,7 +2,7 @@ from PySide6.QtGui import (
     QImage,
     QColor
 )
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, Slot
 
 import math
 
@@ -11,14 +11,14 @@ from settings import *
 class PathGenerator:
     def __init__(self):
         self.image = QImage()
+        self.mono_threshold = DEFAULT_MONO_THRESHOLD
     
     def add_image(self, image: QImage, size):
-        self.image = self.convert_mono_threshold(image, DEFAULT_MONO_THRESHOLD)
-        
+        self.image = self.convert_mono_threshold(image)
         self.image = self.image.scaled(size, Qt.AspectRatioMode.KeepAspectRatio)
         
         
-    def convert_mono_threshold(self, image, threshold): # Convert colorful image into monochrome
+    def convert_mono_threshold(self, image): # Convert colorful image into monochrome
         image = image.convertToFormat(QImage.Format.Format_Grayscale8)
         
         mono_image = QImage(image.size(), QImage.Format.Format_Mono)
@@ -27,7 +27,7 @@ class PathGenerator:
         for x in range(image.width()):
             for y in range(image.height()):
                 pixel = QColor(image.pixel(x, y)).red()
-                mono_image.setPixel(x, y, 0 if pixel < threshold else 1)
+                mono_image.setPixel(x, y, 0 if pixel < self.mono_threshold else 1)
         return mono_image
     
     def convert_to_binary_array(self, image: QImage): # Convert monochrome image to binary array
@@ -68,18 +68,21 @@ class PathGenerator:
         
         visited = set()
         path = []
-        stack = [next(iter(graph_image))]
+        stack = []
         
-        while stack:
-            x, y = stack.pop()
-            
-            if (x,y) not in visited:
-                visited.add((x, y))
-                path.append((x, y))
-                
-                for neighbour in reversed(graph_image.get((x, y), [])):
-                    if neighbour not in visited:
-                        stack.append(neighbour)
+        for node in graph_image: # Accounting for disconnected regions
+            if node not in visited:
+                stack = [node]
+                while stack:
+                    x, y = stack.pop()
+                    
+                    if (x,y) not in visited:
+                        visited.add((x, y))
+                        path.append((x, y))
+                        
+                        for neighbour in reversed(graph_image.get((x, y), [])):
+                            if neighbour not in visited:
+                                stack.append(neighbour)
         return path
     
     def simplify_path(self, path): # Combine points that are in one line
@@ -108,4 +111,3 @@ class PathGenerator:
         simplified_path = self.simplify_path(raw_path)
     
         return simplified_path
-    

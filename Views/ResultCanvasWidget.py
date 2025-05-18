@@ -1,5 +1,6 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout
 from PySide6.QtCore import Qt, Slot, QTimer, QPoint
+
+from .CanvasWidget import CanvasWidget
 
 from settings import *
 from PathGenerator import PathGenerator
@@ -13,19 +14,12 @@ from PySide6.QtGui import (
     QColor
 )
 
-class ResultCanvasWidget(QWidget):
+class ResultCanvasWidget(CanvasWidget):
         
     def __init__(self):
         super().__init__()
 
-        self.layout = QVBoxLayout(self)
-        self.setFixedSize(CANVAS_WIDTH, CANVAS_HEIGHT)
-
-        self.pixmap = QPixmap(self.size())
-        self.painter = QPainter()
-        self.image = QImage()
-        # self.load_image("iron_sword.jpg")
-        
+        # self.load_image("heart.jpg")
         self.path_generator = PathGenerator()
         self.path_generator.add_image(self.image, self.size())
         
@@ -38,18 +32,6 @@ class ResultCanvasWidget(QWidget):
         # Timer for animation
         self.animation_timer = QTimer(self)
         self.animation_timer.timeout.connect(self.animate_step)
-        
-
-
-    @Slot(str)
-    def load_image(self, path):
-        self.image.load(path)
-        self.image = self.convert_mono_threshold(self.image, 10)
-        self.pixmap = QPixmap.fromImage(self.image.scaled(
-                    self.size(), 
-                    Qt.AspectRatioMode.KeepAspectRatio,
-                ))
-        self.update()
 
     def start_animation(self):
         """Call this to start the animation"""
@@ -92,10 +74,9 @@ class ResultCanvasWidget(QWidget):
             p2 = QPoint(self.path[self.current_index][0], self.path[self.current_index][1])
             painter.drawLine(p1, p2)
     
-    @Slot(QImage)
-    def image_changed(self, image: QImage):
-        self.path_generator.add_image(image, self.size())
-        print("IMage changed")
+    def update_image(self):
+        super().update_image()
+        self.path_generator.add_image(self.image, self.size())
         
         self.path = self.path_generator.generate_path()
         
