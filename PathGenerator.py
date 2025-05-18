@@ -2,6 +2,7 @@ from PySide6.QtGui import (
     QImage,
     QColor
 )
+from PySide6.QtCore import Qt
 
 import math
 
@@ -11,8 +12,10 @@ class PathGenerator:
     def __init__(self):
         self.image = QImage()
     
-    def add_image(self, image: QImage):
+    def add_image(self, image: QImage, size):
         self.image = self.convert_mono_threshold(image, DEFAULT_MONO_THRESHOLD)
+        
+        self.image = self.image.scaled(size, Qt.AspectRatioMode.KeepAspectRatio)
         
         
     def convert_mono_threshold(self, image, threshold): # Convert colorful image into monochrome
@@ -79,7 +82,10 @@ class PathGenerator:
                         stack.append(neighbour)
         return path
     
-    def simplify_path(self, path):
+    def simplify_path(self, path): # Combine points that are in one line
+        if len(path) <= 2:
+            return path
+        
         simplified_path = [path[0]]
         current_direction = self.get_direction(path[0], path[1])
         for i in range(1, len(path) - 1):
@@ -101,6 +107,5 @@ class PathGenerator:
         raw_path = self.build_path(image_graph)
         simplified_path = self.simplify_path(raw_path)
     
-        # return ra÷w_path
         return simplified_path
     

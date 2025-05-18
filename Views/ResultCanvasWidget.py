@@ -3,12 +3,14 @@ from PySide6.QtCore import Qt, Slot, QTimer, QPoint
 
 from settings import *
 from PathGenerator import PathGenerator
+from random import randrange
 
 from PySide6.QtGui import (
     QPainter,
     QPixmap,
     QImage,
-    
+    QPen,
+    QColor
 )
 
 class ResultCanvasWidget(QWidget):
@@ -25,7 +27,7 @@ class ResultCanvasWidget(QWidget):
         # self.load_image("iron_sword.jpg")
         
         self.path_generator = PathGenerator()
-        self.path_generator.add_image(self.image)
+        self.path_generator.add_image(self.image, self.size())
         
         self.path = []
         self.current_index = 0
@@ -63,12 +65,15 @@ class ResultCanvasWidget(QWidget):
         """Increment the current drawing index and update"""
         if self.current_index < len(self.path):
             buffer_painter = QPainter(self.buffer_pixmap)
+            color = randrange(0, COLOR_RANDOMNESS)
+            pen = QPen(QColor(color, color, color, 80))
+            buffer_painter.setPen(pen)
             p1 = QPoint(self.path[self.current_index-1][0], self.path[self.current_index-1][1])
             p2 = QPoint(self.path[self.current_index][0], self.path[self.current_index][1])
             buffer_painter.drawLine(p1, p2)
             buffer_painter.end()
             
-            self.current_index += ANIMATION_STEP
+            self.current_index += 1
             if self.current_index > len(self.path):
                 self.current_index = len(self.path)
             self.update()  # Trigger paintEvent
@@ -77,6 +82,9 @@ class ResultCanvasWidget(QWidget):
             
     def paintEvent(self, event):
         painter = QPainter(self)
+        color = randrange(0, COLOR_RANDOMNESS)
+        pen = QPen(QColor(color, color, color, 80))
+        painter.setPen(pen)
         if self.buffer_pixmap:
             painter.drawPixmap(0, 0, self.buffer_pixmap)
         if 0 < self.current_index < len(self.path):
@@ -86,7 +94,7 @@ class ResultCanvasWidget(QWidget):
     
     @Slot(QImage)
     def image_changed(self, image: QImage):
-        self.path_generator.add_image(image)
+        self.path_generator.add_image(image, self.size())
         print("IMage changed")
         
         self.path = self.path_generator.generate_path()
