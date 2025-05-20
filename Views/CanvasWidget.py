@@ -28,7 +28,6 @@ class CanvasWidget(QWidget):
     @Slot(str)
     def load_image(self, path):
         self.original_image.load(path)
-        self.update_image()
         
         
     def convert_mono_threshold(self, image):
@@ -46,7 +45,6 @@ class CanvasWidget(QWidget):
     @Slot(int)
     def threshold_changed(self, new_threshold):
         self.mono_threshold = new_threshold
-        self.update_image()
         
     def update_image(self):
         self.image = self.convert_mono_threshold(self.original_image)

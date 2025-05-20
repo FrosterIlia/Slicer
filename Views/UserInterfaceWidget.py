@@ -13,6 +13,7 @@ class UserInterfaceWidget(QWidget):
     
     load_file_signal = Signal(str)
     threshold_signal = Signal(int)
+    slice_signal = Signal()
 
     def __init__(self):
         super().__init__()
@@ -20,6 +21,7 @@ class UserInterfaceWidget(QWidget):
 
         self.layout = QVBoxLayout(self)
         self.load_button = QPushButton("Load")
+        self.slice_button = QPushButton("Slice")
         
         self.threshold_slider = LabelledSlider(
             orientation = Qt.Horizontal,
@@ -28,13 +30,16 @@ class UserInterfaceWidget(QWidget):
             label_text = f"Threshold: {DEFAULT_MONO_THRESHOLD}",
             label_position = "top"
         )
+        self.threshold_slider.setValue(DEFAULT_MONO_THRESHOLD)
         self.threshold_slider.container.setFixedSize(200, 80)
 
         self.layout.addWidget(self.load_button)
         self.layout.addWidget(self.threshold_slider.widget())
+        self.layout.addWidget(self.slice_button)
 
         self.load_button.clicked.connect(self.load_file)
-        self.threshold_slider.sliderReleased.connect(self.threshold_changed)
+        self.threshold_slider.valueChanged.connect(self.threshold_changed)
+        self.slice_button.clicked.connect(self.slice_signal.emit)
 
     @Slot()
     def load_file(self):

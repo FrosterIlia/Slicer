@@ -44,6 +44,7 @@ class MainWindow(QMainWindow):
         self.ui.load_file_signal.connect(self.result_canvas_widget.load_image)
         self.ui.threshold_signal.connect(self.raw_canvas_widget.threshold_changed)
         self.ui.threshold_signal.connect(self.result_canvas_widget.threshold_changed)
+        self.ui.slice_signal.connect(self.result_canvas_widget.update_image)
 
 
 if __name__ == "__main__":
