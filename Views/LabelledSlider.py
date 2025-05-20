@@ -8,9 +8,9 @@ from PySide6.QtWidgets import (
 )
 
 from PySide6.QtCore import Qt
-from settings import *
+from constants import *
 
-from settings import *
+from constants import *
 
 
 class LabelledSlider(QSlider):
@@ -41,6 +41,8 @@ class LabelledSlider(QSlider):
             self.layout.addWidget(self.label)
         else:
             raise ValueError("label_position must be 'top' or 'bottom'")
+        
+        self.container.setFixedSize(DEFAULT_LABELLED_SLIDER_WIDTH, DEFAULT_LABELLED_SLIDER_HEIGHT)
         
         # Maintain direct access to QSlider methods
         self.setOrientation = super().setOrientation

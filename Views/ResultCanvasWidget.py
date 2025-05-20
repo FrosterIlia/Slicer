@@ -1,15 +1,14 @@
-from PySide6.QtCore import Qt, Slot, QTimer, QPoint
+from PySide6.QtCore import Qt, QTimer, QPoint
 
 from .CanvasWidget import CanvasWidget
 
-from settings import *
+from constants import *
 from PathGenerator import PathGenerator
 from random import randrange
 
 from PySide6.QtGui import (
     QPainter,
     QPixmap,
-    QImage,
     QPen,
     QColor
 )
@@ -32,6 +31,10 @@ class ResultCanvasWidget(CanvasWidget):
         # Timer for animation
         self.animation_timer = QTimer(self)
         self.animation_timer.timeout.connect(self.animate_step)
+        
+        self.picture_width = 1
+        self.picture_height = 1
+        
 
     def start_animation(self):
         """Call this to start the animation"""
@@ -50,7 +53,7 @@ class ResultCanvasWidget(CanvasWidget):
             color = randrange(0, COLOR_RANDOMNESS)
             pen = QPen(QColor(color, color, color, 80))
             buffer_painter.setPen(pen)
-            p1 = QPoint(self.path[self.current_index-1][0], self.path[self.current_index-1][1])
+            p1 = QPoint(self.path[self.current_index - 1][0], self.path[self.current_index - 1][1])
             p2 = QPoint(self.path[self.current_index][0], self.path[self.current_index][1])
             buffer_painter.drawLine(p1, p2)
             buffer_painter.end()
@@ -70,9 +73,11 @@ class ResultCanvasWidget(CanvasWidget):
         if self.buffer_pixmap:
             painter.drawPixmap(0, 0, self.buffer_pixmap)
         if 0 < self.current_index < len(self.path):
-            p1 = QPoint(self.path[self.current_index-1][0], self.path[self.current_index-1][1])
+            p1 = QPoint(self.path[self.current_index - 1][0], self.path[self.current_index - 1][1])
             p2 = QPoint(self.path[self.current_index][0], self.path[self.current_index][1])
             painter.drawLine(p1, p2)
+        
+        super().paintEvent(event)
     
     def update_image(self):
         super().update_image()
@@ -81,3 +86,4 @@ class ResultCanvasWidget(CanvasWidget):
         self.path = self.path_generator.generate_path()
         
         self.start_animation()
+        

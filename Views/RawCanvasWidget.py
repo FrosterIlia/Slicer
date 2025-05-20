@@ -2,11 +2,10 @@ from PySide6.QtCore import Slot
 
 from .CanvasWidget import CanvasWidget
 
-from settings import *
+from constants import *
 
 from PySide6.QtGui import (
     QPainter,
-    QPixmap,
 )
 
 class RawCanvasWidget(CanvasWidget):
@@ -17,6 +16,7 @@ class RawCanvasWidget(CanvasWidget):
 
 
     def paintEvent(self, event):
+        super().paintEvent(event)
         painter = QPainter(self)
         painter.drawPixmap(0, 0, self.pixmap)
         

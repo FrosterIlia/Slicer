@@ -1,5 +1,5 @@
 import pytest
-from ..settings import *
+from ..constants import *
 from ..PathGenerator import *
 from PySide6.QtGui import QImage
 

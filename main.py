@@ -1,5 +1,5 @@
 import sys
-from settings import *
+from constants import *
 
 from PySide6.QtWidgets import (
     QWidget,
@@ -30,9 +30,9 @@ class MainWindow(QMainWindow):
         self.result_canvas_widget = ResultCanvasWidget()
         self.ui = UserInterfaceWidget()
 
-        self.layout.addWidget(self.ui, 0, 0, 2, 1)
+        self.layout.addWidget(self.ui, 0, 0, 1, 1)
         self.layout.addWidget(self.raw_canvas_widget, 0, 1, 1, 1)
-        self.layout.addWidget(self.result_canvas_widget, 1, 1, 1, 1)
+        self.layout.addWidget(self.result_canvas_widget, 0, 2, 1, 1)
 
         self.connect_signals()
         

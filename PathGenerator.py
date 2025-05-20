@@ -2,11 +2,11 @@ from PySide6.QtGui import (
     QImage,
     QColor
 )
-from PySide6.QtCore import Qt, Slot
+from PySide6.QtCore import Qt
 
 import math
 
-from settings import *
+from constants import *
 
 class PathGenerator:
     def __init__(self):
@@ -111,3 +111,7 @@ class PathGenerator:
         simplified_path = self.simplify_path(raw_path)
     
         return simplified_path
+
+    def generate_file(self, path):
+        for i in range(len(path)):
+            pass

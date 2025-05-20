@@ -1,13 +1,14 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout
-from PySide6.QtCore import Qt, Slot, Signal
+from PySide6.QtCore import Qt, Slot
 
-from settings import *
+from constants import *
 
 from PySide6.QtGui import (
     QPainter,
     QPixmap,
     QImage,
-    QColor
+    QColor,
+    QPen
 )
 
 class CanvasWidget(QWidget):
@@ -16,7 +17,7 @@ class CanvasWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.layout = QVBoxLayout(self)
-        self.setFixedSize(CANVAS_WIDTH, CANVAS_HEIGHT)
+        self.setFixedSize(int(A4_WIDTH * CANVAS_SIZE_SCALER), int(A4_HEIGHT * CANVAS_SIZE_SCALER))
 
         self.pixmap = QPixmap(self.size())
         self.painter = QPainter()
@@ -25,9 +26,22 @@ class CanvasWidget(QWidget):
         
         self.mono_threshold = DEFAULT_MONO_THRESHOLD
         
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        
+        pen = QPen(Qt.black, 4, Qt.SolidLine)
+        painter.setPen(pen)
+        
+        painter.drawRect(1, 1, self.width() - 2, self.height() - 2)
+
+        
     @Slot(str)
     def load_image(self, path):
         self.original_image.load(path)
+        
+    @Slot(QPixmap)
+    def load_pixmap(self, pixmap):
+        self.pixmap = pixmap
         
         
     def convert_mono_threshold(self, image):
