@@ -14,7 +14,7 @@ class UserInterfaceWidget(QWidget):
     load_file_signal = Signal(str)
     threshold_signal = Signal(int)
     slice_signal = Signal()
-    picture_size_signal = Signal(int, int)
+    image_size_signal = Signal(int, int)
 
     def __init__(self):
         super().__init__()
@@ -37,7 +37,7 @@ class UserInterfaceWidget(QWidget):
         self.picture_width_slider = LabelledSlider(
             orientation=Qt.Horizontal,
             minimum = 1,
-            maximum = A4_WIDTH,
+            maximum = A4_WIDTH * CANVAS_SIZE_SCALER,
             label_text = f"Picture width: {DEFAULT_PICTURE_WIDTH}",
             label_position = "top"
         )
@@ -46,7 +46,7 @@ class UserInterfaceWidget(QWidget):
         self.picture_height_slider = LabelledSlider(
             orientation=Qt.Horizontal,
             minimum = 1,
-            maximum = A4_HEIGHT,
+            maximum = A4_HEIGHT * CANVAS_SIZE_SCALER,
             label_text = f"Picture height: {DEFAULT_PICTURE_HEIGHT}",
             label_position = "top"
         )
@@ -79,6 +79,6 @@ class UserInterfaceWidget(QWidget):
         
     @Slot()
     def picture_size_changed(self):
-        self.picture_size_signal.emit(self.picture_width_slider.value(), self.picture_height_slider.value())
+        self.image_size_signal.emit(self.picture_width_slider.value(), self.picture_height_slider.value())
         self.picture_width_slider.label.setText(f"Picture width: {self.picture_width_slider.value()}")
         self.picture_height_slider.label.setText(f"Picture height: {self.picture_height_slider.value()}")
