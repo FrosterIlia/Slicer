@@ -8,7 +8,6 @@ from PySide6.QtGui import (
     QPixmap,
     QImage,
     QColor,
-    QPen
 )
 
 class CanvasWidget(QWidget):
@@ -27,12 +26,7 @@ class CanvasWidget(QWidget):
         self.mono_threshold = DEFAULT_MONO_THRESHOLD
         
     def paintEvent(self, event):
-        painter = QPainter(self)
-        
-        pen = QPen(Qt.black, 4, Qt.SolidLine)
-        painter.setPen(pen)
-        
-        painter.drawRect(1, 1, self.width() - 2, self.height() - 2)
+        pass
 
         
     @Slot(str)
@@ -60,8 +54,10 @@ class CanvasWidget(QWidget):
     def threshold_changed(self, new_threshold):
         self.mono_threshold = new_threshold
         
-    def update_image(self):
-        self.image = self.convert_mono_threshold(self.original_image)
+    def update_image(self, image=None):
+        if image is None:
+            image = self.original_image
+        self.image = self.convert_mono_threshold(image)
         self.pixmap = QPixmap.fromImage(self.image.scaled(
                     self.size(), 
                     Qt.AspectRatioMode.KeepAspectRatio,

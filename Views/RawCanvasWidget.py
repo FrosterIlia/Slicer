@@ -1,5 +1,5 @@
 from PySide6.QtCore import Slot, Qt, QSize, QPoint
-from PySide6.QtGui import QMouseEvent
+from PySide6.QtGui import QMouseEvent, QWheelEvent
 
 from .CanvasWidget import CanvasWidget
 
@@ -17,12 +17,13 @@ class RawCanvasWidget(CanvasWidget):
         super().__init__()
         
         self.image_pos = QPoint(0, 0)
-        self.image_width = self.size().width()
-        self.image_height = self.size().height()
+        self.image_size = self.size()
         
         self.dragging = False
         self.offset = QPoint(0, 0)
         self.setCursor(Qt.OpenHandCursor)
+        
+        self.scale_factor = 1
         
         
     # Drag'n drop
@@ -31,19 +32,29 @@ class RawCanvasWidget(CanvasWidget):
             self.dragging = True
             self.offset = event.pos() - self.image_pos
             self.setCursor(Qt.ClosedHandCursor)
-        # super().mousePressEvent(event)
+        super().mousePressEvent(event)
         
     def mouseMoveEvent(self, event: QMouseEvent):
         if self.dragging:
             self.image_pos = event.pos() - self.offset
         self.update()
-        # super().mouseMoveEvent(event)
+        super().mouseMoveEvent(event)
         
     def mouseReleaseEvent(self, event: QMouseEvent):
         if event.button() == Qt.LeftButton:
             self.dragging = False
             self.setCursor(Qt.OpenHandCursor)
-        # super().mouseReleaseEvent(event)
+        super().mouseReleaseEvent(event)
+        
+    def wheelEvent(self, event):
+        print(self.scale_factor)
+        self.scale_factor += event.pixelDelta().y() / 1000
+        self.pixmap = QPixmap.fromImage(self.image.scaled(
+                    self.image_size * self.scale_factor, 
+                    Qt.AspectRatioMode.KeepAspectRatio,
+                ))
+        self.update()
+        super().wheelEvent(event)
 
 
     def paintEvent(self, event):
@@ -64,17 +75,12 @@ class RawCanvasWidget(CanvasWidget):
     def update_image(self):
         self.image = self.convert_mono_threshold(self.original_image)
         self.pixmap = QPixmap.fromImage(self.image.scaled(
-                    QSize(self.image_width, self.image_height), 
+                    self.size() * self.scale_factor, 
                     Qt.AspectRatioMode.KeepAspectRatio,
                 ))
         self.update()
 
-    @Slot(int, int)
-    def change_size(self, width, height):
-        self.image_width = width
-        self.image_height = height
-        self.pixmap = QPixmap.fromImage(self.image.scaled(
-                    QSize(self.image_width, self.image_height), 
-                    Qt.AspectRatioMode.KeepAspectRatio,
-                ))
-        self.update()
+        
+    def get_current_pixmap(self):
+        pixmap = self.grab()
+        return pixmap

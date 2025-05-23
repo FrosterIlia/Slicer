@@ -1,4 +1,4 @@
-from PySide6.QtCore import Qt, QTimer, QPoint
+from PySide6.QtCore import Qt, QTimer, QPoint, Slot
 
 from .CanvasWidget import CanvasWidget
 
@@ -31,9 +31,6 @@ class ResultCanvasWidget(CanvasWidget):
         # Timer for animation
         self.animation_timer = QTimer(self)
         self.animation_timer.timeout.connect(self.animate_step)
-        
-        self.picture_width = 1
-        self.picture_height = 1
         
 
     def start_animation(self):
@@ -79,11 +76,14 @@ class ResultCanvasWidget(CanvasWidget):
         
         super().paintEvent(event)
     
-    def update_image(self):
-        super().update_image()
+    def update_image(self, image=None):
+        super().update_image(image)
         self.path_generator.add_image(self.image, self.size())
         
         self.path = self.path_generator.generate_path()
         
         self.start_animation()
         
+    def slice(self, pixmap: QPixmap):
+        image = pixmap.toImage()
+        self.update_image(image)

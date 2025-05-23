@@ -8,6 +8,13 @@ from PySide6.QtWidgets import (
     QGridLayout
 )
 
+from PySide6.QtGui import (
+    QPainter,
+    QPen
+)
+
+from PySide6.QtCore import Slot, Qt
+
 from Views.RawCanvasWidget import RawCanvasWidget
 from Views.ResultCanvasWidget import ResultCanvasWidget
 from Views.UserInterfaceWidget import UserInterfaceWidget
@@ -37,16 +44,36 @@ class MainWindow(QMainWindow):
         self.connect_signals()
         
         self.raw_canvas_widget.load_image("heart.jpg")
-        self.result_canvas_widget.load_image("heart.jpg")
+        
+        self.update()
 
     def connect_signals(self):
         self.ui.load_file_signal.connect(self.raw_canvas_widget.load_image)
         self.ui.load_file_signal.connect(self.result_canvas_widget.load_image)
         self.ui.threshold_signal.connect(self.raw_canvas_widget.threshold_changed)
         self.ui.threshold_signal.connect(self.result_canvas_widget.threshold_changed)
-        self.ui.slice_signal.connect(self.result_canvas_widget.update_image)
-        self.ui.image_size_signal.connect(self.raw_canvas_widget.change_size)
+        self.ui.slice_signal.connect(self.slice)
+        
+    def paintEvent(self, event):
+        super().paintEvent(event)
+        
+        painter = QPainter(self)
+        
+        pen = QPen(Qt.black, 1, Qt.SolidLine)
+        painter.setPen(pen)
+        
+        raw_rect = self.raw_canvas_widget.geometry()
+        result_rect = self.result_canvas_widget.geometry()
 
+        painter.drawRect(raw_rect)
+        painter.drawRect(result_rect)
+
+    
+    @Slot()
+    def slice(self):
+        raw_pixmap = self.raw_canvas_widget.get_current_pixmap()
+        self.result_canvas_widget.slice(raw_pixmap)
+        
 
 if __name__ == "__main__":
 
