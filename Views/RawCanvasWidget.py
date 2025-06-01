@@ -47,7 +47,6 @@ class RawCanvasWidget(CanvasWidget):
         super().mouseReleaseEvent(event)
         
     def wheelEvent(self, event):
-        print(self.scale_factor)
         self.scale_factor += event.pixelDelta().y() / 1000
         self.pixmap = QPixmap.fromImage(self.image.scaled(
                     self.image_size * self.scale_factor, 

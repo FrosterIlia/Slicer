@@ -87,3 +87,6 @@ class ResultCanvasWidget(CanvasWidget):
     def slice(self, pixmap: QPixmap):
         image = pixmap.toImage()
         self.update_image(image)
+        
+    def export(self):
+        self.path_generator.generate_file(self.path)

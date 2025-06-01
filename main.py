@@ -53,6 +53,7 @@ class MainWindow(QMainWindow):
         self.ui.threshold_signal.connect(self.raw_canvas_widget.threshold_changed)
         self.ui.threshold_signal.connect(self.result_canvas_widget.threshold_changed)
         self.ui.slice_signal.connect(self.slice)
+        self.ui.export_signal.connect(self.result_canvas_widget.export)
         
     def paintEvent(self, event):
         super().paintEvent(event)

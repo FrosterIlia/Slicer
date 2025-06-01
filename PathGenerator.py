@@ -72,31 +72,38 @@ class PathGenerator:
         
         for node in graph_image: # Accounting for disconnected regions
             if node not in visited:
+                temp_path = []
                 stack = [node]
                 while stack:
                     x, y = stack.pop()
                     
                     if (x,y) not in visited:
                         visited.add((x, y))
-                        path.append((x, y))
+                        temp_path.append((x, y))
                         
                         for neighbour in reversed(graph_image.get((x, y), [])):
                             if neighbour not in visited:
                                 stack.append(neighbour)
+                path.append(temp_path)
         return path
     
     def simplify_path(self, path): # Combine points that are in one line
         if len(path) <= 2:
             return path
         
-        simplified_path = [path[0]]
-        current_direction = self.get_direction(path[0], path[1])
-        for i in range(1, len(path) - 1):
-            if self.get_direction(path[i], path[i+1]) != current_direction:
-                current_direction = self.get_direction(path[i], path[i+1])
-                simplified_path.append(path[i])
-                
-        simplified_path.append(path[-1])
+        simplified_path = []
+        for region in path:  
+            simplified_path.append(region[0]) # Move to the first node in the region
+            simplified_path.append("down") # Then start drawing
+            current_direction = self.get_direction(region[0], region[1])
+          
+            for j in range(1, len(region) - 1):
+                if self.get_direction(region[j], region[j+1]) != current_direction:
+                    current_direction = self.get_direction(region[j], region[j+1])
+                    simplified_path.append(region[j])
+            
+            simplified_path.append(region[-1])
+            simplified_path.append("up") # Pen up after the last node in the region
         return simplified_path
         
         
@@ -107,11 +114,14 @@ class PathGenerator:
     def generate_path(self):
         binary_image = self.convert_to_binary_array(self.image)
         image_graph = self.build_graph(self.image, binary_image)
-        raw_path = self.build_path(image_graph)
+        raw_path= self.build_path(image_graph)
         simplified_path = self.simplify_path(raw_path)
     
         return simplified_path
 
     def generate_file(self, path):
-        for i in range(len(path)):
-            pass
+        print(path)
+        file_text = ""
+        for i in path:
+            file_text += f"m {i[0]}, {i[1]}\n"
+        print(file_text)

@@ -14,6 +14,7 @@ class UserInterfaceWidget(QWidget):
     load_file_signal = Signal(str)
     threshold_signal = Signal(int)
     slice_signal = Signal()
+    export_signal = Signal()
 
     def __init__(self):
         super().__init__()
@@ -22,6 +23,7 @@ class UserInterfaceWidget(QWidget):
         self.layout = QVBoxLayout(self)
         self.load_button = QPushButton("Load")
         self.slice_button = QPushButton("Slice")
+        self.export_button = QPushButton("Export")
         
         self.threshold_slider = LabelledSlider(
             orientation = Qt.Horizontal,
@@ -37,11 +39,13 @@ class UserInterfaceWidget(QWidget):
         self.layout.addWidget(self.load_button)
         self.layout.addWidget(self.threshold_slider.widget())
         self.layout.addWidget(self.slice_button)
+        self.layout.addWidget(self.export_button)
         
 
         self.load_button.clicked.connect(self.load_file)
         self.threshold_slider.valueChanged.connect(self.threshold_changed)
         self.slice_button.clicked.connect(self.slice_signal.emit)
+        self.export_button.clicked.connect(self.export_signal.emit)
 
     @Slot()
     def load_file(self):
