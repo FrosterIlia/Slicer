@@ -5,6 +5,7 @@ from PySide6.QtGui import (
 from PySide6.QtCore import Qt
 
 import math
+from collections import deque
 
 from constants import *
 
@@ -68,7 +69,7 @@ class PathGenerator:
         
         visited = set()
         path = []
-        stack = []
+        stack = deque()
         
         for node in graph_image: # Accounting for disconnected regions
             if node not in visited:
@@ -114,14 +115,22 @@ class PathGenerator:
     def generate_path(self):
         binary_image = self.convert_to_binary_array(self.image)
         image_graph = self.build_graph(self.image, binary_image)
-        raw_path= self.build_path(image_graph)
-        simplified_path = self.simplify_path(raw_path)
-    
+        raw_path = self.build_path(image_graph)
+        simplified_path = self.simplify_path(raw_path)    
         return simplified_path
 
-    def generate_file(self, path):
-        print(path)
+    def generate_file(self, path, file_path: str):
+        if not file_path.endswith(".txt"):
+            file_path += ".txt"
         file_text = ""
         for i in path:
-            file_text += f"m {i[0]}, {i[1]}\n"
-        print(file_text)
+            if i == "up":
+                file_text += f"p 1;\n"
+            elif i == "down":
+                file_text += f"p 0;\n"
+            else:
+                file_text += f"m {i[0]}, {i[1]};\n"
+                
+        with open(file_path, "w") as file:
+            file.write(file_text)
+        

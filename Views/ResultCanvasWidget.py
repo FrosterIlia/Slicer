@@ -1,6 +1,10 @@
-from PySide6.QtCore import Qt, QTimer, QPoint, Slot
+from PySide6.QtCore import Qt, QTimer, QPoint
 
 from .CanvasWidget import CanvasWidget
+
+from PySide6.QtWidgets import (
+    QFileDialog
+)
 
 from constants import *
 from PathGenerator import PathGenerator
@@ -46,6 +50,10 @@ class ResultCanvasWidget(CanvasWidget):
     def animate_step(self):
         """Increment the current drawing index and update"""
         if self.current_index < len(self.path):
+            if self.path[self.current_index] in PATH_COMMANDS or self.path[self.current_index - 1] in PATH_COMMANDS: #skip commands in path
+                if self.current_index < len(self.path):
+                    self.current_index += 1
+                return
             buffer_painter = QPainter(self.buffer_pixmap)
             color = randrange(0, COLOR_RANDOMNESS)
             pen = QPen(QColor(color, color, color, 80))
@@ -70,6 +78,9 @@ class ResultCanvasWidget(CanvasWidget):
         if self.buffer_pixmap:
             painter.drawPixmap(0, 0, self.buffer_pixmap)
         if 0 < self.current_index < len(self.path):
+            if self.path[self.current_index] in PATH_COMMANDS or self.path[self.current_index - 1] in PATH_COMMANDS: #skip commands in path
+                return
+        
             p1 = QPoint(self.path[self.current_index - 1][0], self.path[self.current_index - 1][1])
             p2 = QPoint(self.path[self.current_index][0], self.path[self.current_index][1])
             painter.drawLine(p1, p2)
@@ -89,4 +100,5 @@ class ResultCanvasWidget(CanvasWidget):
         self.update_image(image)
         
     def export(self):
-        self.path_generator.generate_file(self.path)
+        file_path = QFileDialog.getSaveFileName()
+        self.path_generator.generate_file(self.path, file_path[0])
