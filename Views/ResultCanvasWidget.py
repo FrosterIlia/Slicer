@@ -79,12 +79,16 @@ class ResultCanvasWidget(CanvasWidget):
             painter.drawPixmap(0, 0, self.buffer_pixmap)
         if 0 < self.current_index < len(self.path):
             if self.path[self.current_index] in PATH_COMMANDS or self.path[self.current_index - 1] in PATH_COMMANDS: #skip commands in path
+                painter.end()
                 return
-        
-            p1 = QPoint(self.path[self.current_index - 1][0], self.path[self.current_index - 1][1])
-            p2 = QPoint(self.path[self.current_index][0], self.path[self.current_index][1])
+
+            try:
+                p1 = QPoint(self.path[self.current_index - 1][0], self.path[self.current_index - 1][1])
+                p2 = QPoint(self.path[self.current_index][0], self.path[self.current_index][1])
+            except:
+                print(self.path[self.current_index - 1][0], self.path[self.current_index - 1][1])
             painter.drawLine(p1, p2)
-        
+        painter.end()
         super().paintEvent(event)
     
     def update_image(self, image=None):

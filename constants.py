@@ -19,7 +19,8 @@ DEFAULT_MONO_THRESHOLD = 100
 MINIMUM_THRESHOLD = 1
 MAXIMUM_THRESHOLD = 255
 
-DIRECTIONS = [(-1, 0), (1, 0), (0, -1), (0, 1), (-1, -1), (-1, 1), (1, -1), (1, 1)]
+DIRECTIONS = [(-1, 0), (1, 0), (0, -1), (0, 1),
+              (-1, -1), (-1, 1), (1, -1), (1, 1)]
 
 COLOR_RANDOMNESS = 50
 

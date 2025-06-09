@@ -24,13 +24,13 @@ class MainWindow(QMainWindow):
 
     def __init__(self, parent=None):
         QMainWindow.__init__(self, parent)
-        
+
         self.setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT)
 
         central_widget = QWidget()
         self.setCentralWidget(central_widget)
-        
-        # Create layout for the central widget¨
+
+        # Create layout for the central widget
         self.layout = QGridLayout(central_widget)
 
         self.raw_canvas_widget = RawCanvasWidget()
@@ -42,39 +42,40 @@ class MainWindow(QMainWindow):
         self.layout.addWidget(self.result_canvas_widget, 0, 2, 1, 1)
 
         self.connect_signals()
-        
+
         self.raw_canvas_widget.load_image("heart.jpg")
-        
+
         self.update()
 
     def connect_signals(self):
         self.ui.load_file_signal.connect(self.raw_canvas_widget.load_image)
         self.ui.load_file_signal.connect(self.result_canvas_widget.load_image)
-        self.ui.threshold_signal.connect(self.raw_canvas_widget.threshold_changed)
-        self.ui.threshold_signal.connect(self.result_canvas_widget.threshold_changed)
+        self.ui.threshold_signal.connect(
+            self.raw_canvas_widget.threshold_changed)
+        self.ui.threshold_signal.connect(
+            self.result_canvas_widget.threshold_changed)
         self.ui.slice_signal.connect(self.slice)
         self.ui.export_signal.connect(self.result_canvas_widget.export)
-        
+
     def paintEvent(self, event):
         super().paintEvent(event)
-        
+
         painter = QPainter(self)
-        
+
         pen = QPen(Qt.black, 1, Qt.SolidLine)
         painter.setPen(pen)
-        
+
         raw_rect = self.raw_canvas_widget.geometry()
         result_rect = self.result_canvas_widget.geometry()
 
         painter.drawRect(raw_rect)
         painter.drawRect(result_rect)
 
-    
     @Slot()
     def slice(self):
         raw_pixmap = self.raw_canvas_widget.get_current_pixmap()
         self.result_canvas_widget.slice(raw_pixmap)
-        
+
 
 if __name__ == "__main__":
 
