@@ -105,4 +105,5 @@ class ResultCanvasWidget(CanvasWidget):
         
     def export(self):
         file_path = QFileDialog.getSaveFileName()
-        self.path_generator.generate_file(self.path, file_path[0])
+        if file_path[0]: # Do nothing if no file selected
+            self.path_generator.generate_file(self.path, file_path[0])
