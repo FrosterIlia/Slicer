@@ -1,5 +1,5 @@
 from PySide6.QtGui import QImage, QColor
-from PySide6.QtCore import Qt
+from PySide6.QtCore import Qt, QSize
 
 import math
 from collections import deque
@@ -12,11 +12,13 @@ class PathGenerator:
         self.image = QImage()
         self.mono_threshold = DEFAULT_MONO_THRESHOLD
 
-    def add_image(self, image: QImage, size):
+    def add_image(self, image: QImage, size: QSize):
         self.image = self.convert_mono_threshold(image)
-        self.image = self.image.scaled(size, Qt.AspectRatioMode.KeepAspectRatio)
+        self.image = self.image.scaled(
+            size, Qt.AspectRatioMode.KeepAspectRatio)
 
-    def convert_mono_threshold(self, image):  # Convert colorful image into monochrome
+    # Convert colorful image into monochrome
+    def convert_mono_threshold(self, image):
         image = image.convertToFormat(QImage.Format.Format_Grayscale8)
 
         mono_image = QImage(image.size(), QImage.Format.Format_Mono)
@@ -25,7 +27,8 @@ class PathGenerator:
         for x in range(image.width()):
             for y in range(image.height()):
                 pixel = QColor(image.pixel(x, y)).red()
-                mono_image.setPixel(x, y, 0 if pixel < self.mono_threshold else 1)
+                mono_image.setPixel(x, y, 0 if pixel <
+                                    self.mono_threshold else 1)
         return mono_image
 
     def convert_to_binary_array(
@@ -40,9 +43,8 @@ class PathGenerator:
 
         return binary_array
 
-    def build_graph(
-        self, image: QImage, binary_array
-    ):  # Convert monochrome image to a graph (black - nodes)
+    # Convert monochrome image to a graph (black - nodes)
+    def build_graph(self, image: QImage, binary_array):
         height, width = image.height(), image.width()
         graph = {}
 
@@ -90,7 +92,8 @@ class PathGenerator:
     def simplify_path(self, path):  # Combine points that are in one line
         simplified_path = []
         for region in path:
-            simplified_path.append(region[0])  # Move to the first node in the region
+            # Move to the first node in the region
+            simplified_path.append(region[0])
             simplified_path.append("down")  # Then start drawing
             if len(region) < 2:
                 simplified_path.append("up")
@@ -99,11 +102,13 @@ class PathGenerator:
 
             for j in range(1, len(region) - 1):
                 if self.get_direction(region[j], region[j + 1]) != current_direction:
-                    current_direction = self.get_direction(region[j], region[j + 1])
+                    current_direction = self.get_direction(
+                        region[j], region[j + 1])
                     simplified_path.append(region[j])
 
             simplified_path.append(region[-1])
-            simplified_path.append("up")  # Pen up after the last node in the region
+            # Pen up after the last node in the region
+            simplified_path.append("up")
         return simplified_path
 
     def get_direction(self, point1, point2):
@@ -111,6 +116,25 @@ class PathGenerator:
             (point2[0] - point1[0]) ** 2 + (point2[1] - point1[1]) ** 2
         )
         return [(point2[0] - point1[0]) / distance, (point2[1] - point1[1]) / distance]
+
+    def scale_path(self, path, size0: QSize, size1: QSize):
+        new_path = []
+        for i in path:
+            if i == "up":
+                new_path.append(i)
+            elif i == "down":
+                new_path.append(i)
+            else:
+                x = int(self.map(i[0], 0, size0.width(), 0, size1.width()))
+                y = int(self.map(i[1], 0, size0.height(), 0, size1.height()))
+                new_path.append([x, y])
+
+        return new_path
+
+    def map(self, value, min0, max0, min1, max1):  # Linear interpolation
+        if max0 - min0 == 0:
+            return min1  # Avoid division by zero
+        return (value - min0) / (max0 - min0) * (max1 - min1) + min1
 
     def generate_path(self):
         binary_image = self.convert_to_binary_array(self.image)
@@ -125,11 +149,11 @@ class PathGenerator:
         file_text = ""
         for i in path:
             if i == "up":
-                file_text += f"p 1\n"
+                file_text += f"p 1;\n"
             elif i == "down":
-                file_text += f"p 0\n"
+                file_text += f"p 0;\n"
             else:
-                file_text += f"m {i[0]},{i[1]}\n"
+                file_text += f"m {i[0]}, {i[1]};\n"
 
         with open(file_path, "w") as file:
             file.write(file_text)

@@ -16,8 +16,8 @@ class CanvasWidget(QWidget):
     def __init__(self):
         super().__init__()
         self.layout = QVBoxLayout(self)
-        self.setFixedSize(int(A4_WIDTH * CANVAS_SIZE_SCALER),
-                          int(A4_HEIGHT * CANVAS_SIZE_SCALER))
+        self.setFixedSize(int(A4_WIDTH_MM * CANVAS_SIZE_SCALER),
+                          int(A4_HEIGHT_MM * CANVAS_SIZE_SCALER))
 
         self.pixmap = QPixmap(self.size())
         self.painter = QPainter()
@@ -31,7 +31,8 @@ class CanvasWidget(QWidget):
 
     @Slot(str)
     def load_image(self, path):
-        self.original_image.load(path)
+        if not self.original_image.load(path):
+            print("No image loaded")
 
     @Slot(QPixmap)
     def load_pixmap(self, pixmap):

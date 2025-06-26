@@ -43,7 +43,7 @@ class MainWindow(QMainWindow):
 
         self.connect_signals()
 
-        self.raw_canvas_widget.load_image("heart.jpg")
+        self.raw_canvas_widget.load_image("Slicer/heart.jpg")
 
         self.update()
 
