@@ -2,6 +2,8 @@
 **/__pycache__/
 /.vscode/
 **.jpg
+**.png
+**.txt
 /.pytest_cache
 sample.txt
 test.txt

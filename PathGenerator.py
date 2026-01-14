@@ -149,11 +149,13 @@ class PathGenerator:
         file_text = ""
         for i in path:
             if i == "up":
-                file_text += f"p 1;\n"
+                file_text += f"p 1\n"
             elif i == "down":
-                file_text += f"p 0;\n"
+                file_text += f"p 0\n"
             else:
-                file_text += f"m {i[0]}, {i[1]};\n"
+                file_text += f"m {i[0]}, {i[1]}\n"
+                
+        file_text += "m 0, 0\n"
 
         with open(file_path, "w") as file:
             file.write(file_text)
